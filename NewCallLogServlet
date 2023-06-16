@@ -1,0 +1,102 @@
+package com.call_log.controller;
+
+import java.io.IOException;
+import java.sql.SQLException;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.call_log.dao.CallLogDao;
+import com.call_log.model.CallerParticulars;
+
+@WebServlet(name = "NewCallLogServlet", urlPatterns = { "/saveAndClose","/saveAndCreateNewLog", "/closeForm" })
+public class NewCallLogServlet extends HttpServlet {
+
+
+	private static final long serialVersionUID = 1L;
+
+	private CallLogDao callLogDao;
+
+	public NewCallLogServlet() {
+		super();
+		this.callLogDao = new CallLogDao();
+
+	}
+
+	public void init(ServletConfig config) throws ServletException {
+
+	}
+
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("test");
+	}
+
+	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("testServlet");
+		String url = request.getServletPath();
+		CallerParticulars cp = new CallerParticulars();
+
+		cp.setName(request.getParameter("nmName"));
+		cp.setBlock(request.getParameter("nmBlock"));
+		cp.setAddress(request.getParameter("nmAddress"));
+		cp.setDoorNumber(request.getParameter("nmFloor"));
+		cp.setUnitNumber(request.getParameter("nmUnit"));
+		cp.setPostalcode(request.getParameter("nmPostalCode"));
+		cp.setIcType(request.getParameter("nmICType"));
+		cp.setIcNumber(request.getParameter("nmICNo"));
+		cp.setEmail(request.getParameter("nmEmail"));
+		cp.setHomePhoneNumber(request.getParameter("nmHomeNumber"));
+		cp.setOfficePhoneNumber(request.getParameter("nmOffice"));
+		cp.setHandPhoneNumber(request.getParameter("nmHP"));
+		cp.setPg(request.getParameter("nmPG"));
+		cp.setFax(request.getParameter("nmFax"));
+		cp.setNatureOfEnquiry(request.getParameter("NE"));
+		cp.setNameOfEnquiry(request.getParameter("NET"));
+		cp.setTypeOfEnquiry(request.getParameter("TOE"));
+		cp.setEnquiryComments(request.getParameter("nmCustomerComment"));
+		cp.setOic(request.getParameter("FUOIC"));
+		cp.setRating(request.getParameter("CRR"));
+		cp.setDetailsOfEncounter(request.getParameter("nmtxtDOE"));
+
+		try {
+
+			if (url.equals("/saveAndClose")) {
+				if (cp.getName().equals("") || cp.getName() == null
+						&& cp.getRating().equals("") || cp.getRating() == null
+						&& cp.getIcNumber().equals("")
+						|| cp.getIcNumber() == null) {
+					response.sendRedirect("CallerEnquiry.jsp");
+
+				} else {
+					callLogDao.insertCallLogInformation(cp);
+					response.sendRedirect("HomePage.jsp");
+				}
+
+			} else if (url.equals("/saveAndCreateNewLog")) {
+				if (cp.getName().equals("") || cp.getName() == null
+						&& cp.getRating().equals("") || cp.getRating() == null
+						&& cp.getIcNumber().equals("")
+						|| cp.getIcNumber() == null) {
+					response.sendRedirect("CallerEnquiry.jsp");
+
+				} else {
+					callLogDao.insertCallLogInformation(cp);
+					response.sendRedirect("CallerEnquiry.jsp");
+				}
+				
+			} else if (url.equals("/closeForm")) {
+				response.sendRedirect("HomePage.jsp");
+			}
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+}
