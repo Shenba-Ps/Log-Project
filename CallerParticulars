@@ -1,0 +1,275 @@
+package com.call_log.model;
+
+import java.io.Serializable;
+
+public class CallerParticulars implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	private int id;
+	private String name;
+	private String block;
+	private String address;
+	private String doorNumber;
+	private String unitNumber;
+	private String postalcode;
+	private String icType;
+	private String icNumber;
+	private String email;
+	private String homePhoneNumber;
+	private String officePhoneNumber;
+	private String handPhoneNumber;
+	private String pg;
+	private String fax;
+	private String natureOfEnquiry;
+	private String nameOfEnquiry;
+	private String typeOfEnquiry;
+	private String enquiryComments;
+	private String oic;
+	private String rating;
+	private String ratingType;
+	private String detailsOfEncounter;
+	private String createdDate;
+	private String createdDateTime;
+
+	public CallerParticulars(String name, String block, String address,
+			String doorNumber, String unitNumber, String postalcode,
+			String icType, String icNumber, String email,
+			String homePhoneNumber, String officePhoneNumber,
+			String handPhoneNumber, String pg, String fax,
+			String natureOfEnquiry, String nameOfEnquiry, String typeOfEnquiry,
+			String enquiryComments, String oic, String rating,
+			String ratingType, String detailsOfEncounter, String createdDate,
+			String createdDateTime) {
+		super();
+		this.name = name;
+		this.block = block;
+		this.address = address;
+		this.doorNumber = doorNumber;
+		this.unitNumber = unitNumber;
+		this.postalcode = postalcode;
+		this.icType = icType;
+		this.icNumber = icNumber;
+		this.email = email;
+		this.homePhoneNumber = homePhoneNumber;
+		this.officePhoneNumber = officePhoneNumber;
+		this.handPhoneNumber = handPhoneNumber;
+		this.pg = pg;
+		this.fax = fax;
+		this.natureOfEnquiry = natureOfEnquiry;
+		this.nameOfEnquiry = nameOfEnquiry;
+		this.typeOfEnquiry = typeOfEnquiry;
+		this.enquiryComments = enquiryComments;
+		this.oic = oic;
+		this.rating = rating;
+		this.ratingType = ratingType;
+		this.detailsOfEncounter = detailsOfEncounter;
+		this.createdDate = createdDate;
+		this.createdDateTime = createdDateTime;
+	}
+
+	public CallerParticulars() {
+		super();
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getBlock() {
+		return block;
+	}
+
+	public void setBlock(String block) {
+		this.block = block;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getDoorNumber() {
+		return doorNumber;
+	}
+
+	public void setDoorNumber(String doorNumber) {
+		this.doorNumber = doorNumber;
+	}
+
+	public String getUnitNumber() {
+		return unitNumber;
+	}
+
+	public void setUnitNumber(String unitNumber) {
+		this.unitNumber = unitNumber;
+	}
+
+	public String getPostalcode() {
+		return postalcode;
+	}
+
+	public void setPostalcode(String postalcode) {
+		this.postalcode = postalcode;
+	}
+
+	public String getIcType() {
+		return icType;
+	}
+
+	public void setIcType(String icType) {
+		this.icType = icType;
+	}
+
+	public String getIcNumber() {
+		return icNumber;
+	}
+
+	public void setIcNumber(String icNumber) {
+		this.icNumber = icNumber;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getHomePhoneNumber() {
+		return homePhoneNumber;
+	}
+
+	public void setHomePhoneNumber(String homePhoneNumber) {
+		this.homePhoneNumber = homePhoneNumber;
+	}
+
+	public String getOfficePhoneNumber() {
+		return officePhoneNumber;
+	}
+
+	public void setOfficePhoneNumber(String officePhoneNumber) {
+		this.officePhoneNumber = officePhoneNumber;
+	}
+
+	public String getHandPhoneNumber() {
+		return handPhoneNumber;
+	}
+
+	public void setHandPhoneNumber(String handPhoneNumber) {
+		this.handPhoneNumber = handPhoneNumber;
+	}
+
+	public String getPg() {
+		return pg;
+	}
+
+	public void setPg(String pg) {
+		this.pg = pg;
+	}
+
+	public String getFax() {
+		return fax;
+	}
+
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
+
+	public String getNameOfEnquiry() {
+		return nameOfEnquiry;
+	}
+
+	public void setNameOfEnquiry(String nameOfEnquiry) {
+		this.nameOfEnquiry = nameOfEnquiry;
+	}
+
+	public String getTypeOfEnquiry() {
+		return typeOfEnquiry;
+	}
+
+	public void setTypeOfEnquiry(String typeOfEnquiry) {
+		this.typeOfEnquiry = typeOfEnquiry;
+	}
+
+	public String getEnquiryComments() {
+		return enquiryComments;
+	}
+
+	public void setEnquiryComments(String enquiryComments) {
+		this.enquiryComments = enquiryComments;
+	}
+
+	public String getOic() {
+		return oic;
+	}
+
+	public void setOic(String oic) {
+		this.oic = oic;
+	}
+
+	public String getRating() {
+		return rating;
+	}
+
+	public void setRating(String rating) {
+		this.rating = rating;
+	}
+
+	public String getRatingType() {
+		return ratingType;
+	}
+
+	public void setRatingType(String ratingType) {
+		this.ratingType = ratingType;
+	}
+
+	public String getDetailsOfEncounter() {
+		return detailsOfEncounter;
+	}
+
+	public void setDetailsOfEncounter(String detailsOfEncounter) {
+		this.detailsOfEncounter = detailsOfEncounter;
+	}
+
+	public String getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(String createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getCreatedDateTime() {
+		return createdDateTime;
+	}
+
+	public void setCreatedDateTime(String createdDateTime) {
+		this.createdDateTime = createdDateTime;
+	}
+
+	public String getNatureOfEnquiry() {
+		return natureOfEnquiry;
+	}
+
+	public void setNatureOfEnquiry(String natureOfEnquiry) {
+		this.natureOfEnquiry = natureOfEnquiry;
+	}
+
+}
