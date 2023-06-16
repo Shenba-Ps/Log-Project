@@ -1,0 +1,372 @@
+package com.call_log.dao;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import com.call_log.database.DbConnection;
+import com.call_log.model.CallerParticulars;
+
+public class CallLogDao {
+
+	Connection connection = null;
+	Statement st = null;
+	PreparedStatement preparedStatement = null;
+	ResultSet resultSet = null;
+
+	public void createDb() throws SQLException {
+		
+		connection = new DbConnection().getConnection();
+		try {
+			st = connection.createStatement();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		String query = " CREATE TABLE app.call_logs ( id INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+				+ "name varchar(50) DEFAULT NULL,"
+				+ "block varchar(20) DEFAULT NULL,"
+				+ "address varchar (50) DEFAULT NULL,"
+				+ "door_number varchar(10) DEFAULT NULL,"
+				+ "unit_number varchar(10) DEFAULT NULL,"
+				+ "postalcode varchar(10) DEFAULT NULL,"
+				+ "ic_type varchar(20) DEFAULT NULL,"
+				+ "ic_number varchar(20) DEFAULT NULL,"
+				+ "email varchar (50) DEFAULT NULL,"
+				+ "home_ph_no varchar (10) DEFAULT NULL,"
+				+ "office_ph_no varchar (10) DEFAULT NULL,"
+				+ "hand_ph_no varchar (10) DEFAULT NULL,"
+				+ "pg varchar (10) DEFAULT NULL,"
+				+ "fax varchar (10) DEFAULT NULL,"
+				+ "nature_of_enquiry varchar(50)  DEFAULT NULL,"
+				+ "name_of_enquiry varchar (50) DEFAULT NULL,"
+				+ "type_of_enquiry varchar (50) DEFAULT NULL,"
+				+ "enquiry_comments varchar (500) DEFAULT NULL,"
+				+ "oic varchar (20) DEFAULT NULL,"
+				+ "rating varchar (10) DEFAULT NULL,"
+				+ "rating_type varchar (10) DEFAULT NULL,"
+				+ "details_of_encounter varchar (500) DEFAULT NULL,"
+				+ "created_date DATE DEFAULT NULL,"
+				+ "created_date_time timestamp DEFAULT NULL,"
+				+ "PRIMARY KEY (id)" + ")";
+
+
+		String dropQuery = "drop table app.call_logs";
+		int rows;
+		try {
+			rows = st.executeUpdate(query);
+			if (rows > 0) {
+				System.out.println("Table successfully created");
+			}else{
+				System.out.println("Failed to create");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			st.close();
+			connection.close();
+		}
+
+	}
+
+	public int insertCallLogInformation(CallerParticulars cpRequest)
+			throws SQLException {
+
+		int result = 0;
+
+		String insertQuery = "insert into call_logs(name,block,address,door_number,"
+				+ "unit_number,postalcode,ic_type,ic_number,email,"
+				+ "home_ph_no,office_ph_no,hand_ph_no,pg,"
+				+ "fax,nature_of_enquiry,name_of_enquiry,"
+				+ "type_of_enquiry,enquiry_comments,oic,"
+				+ "rating,rating_type,details_of_encounter,"
+				+ "created_date,created_date_time) "
+				+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		try {
+			connection = new DbConnection().getConnection();
+			preparedStatement = connection.prepareStatement(insertQuery);
+
+			preparedStatement.setString(1, cpRequest.getName());
+			preparedStatement.setString(2, cpRequest.getBlock());
+			preparedStatement.setString(3, cpRequest.getAddress());
+			preparedStatement.setString(4, cpRequest.getDoorNumber());
+			preparedStatement.setString(5, cpRequest.getUnitNumber());
+			preparedStatement.setString(6, cpRequest.getPostalcode());
+			preparedStatement.setString(7, cpRequest.getIcType());
+			preparedStatement.setString(8, cpRequest.getIcNumber());
+			preparedStatement.setString(9, cpRequest.getEmail());
+			preparedStatement.setString(10, cpRequest.getHomePhoneNumber());
+			preparedStatement.setString(11, cpRequest.getOfficePhoneNumber());
+			preparedStatement.setString(12, cpRequest.getHandPhoneNumber());
+			preparedStatement.setString(13, cpRequest.getPg());
+			preparedStatement.setString(14, cpRequest.getFax());
+			preparedStatement.setString(15, cpRequest.getNatureOfEnquiry());
+			preparedStatement.setString(16, cpRequest.getNameOfEnquiry());
+			preparedStatement.setString(17, cpRequest.getTypeOfEnquiry());
+			preparedStatement.setString(18, cpRequest.getEnquiryComments());
+			preparedStatement.setString(19, cpRequest.getOic());
+			preparedStatement.setString(20, cpRequest.getRating());
+			int ratingVar =Integer.parseInt(cpRequest.getRating()) ;
+			if (ratingVar >= 4) {
+				cpRequest.setRatingType("chilly");
+			} else {
+				cpRequest.setRatingType("cherry");
+			}
+			preparedStatement.setString(21, cpRequest.getRatingType());		
+			preparedStatement.setString(22, cpRequest.getDetailsOfEncounter());
+			long millis = System.currentTimeMillis();
+			java.sql.Date date = new java.sql.Date(millis);
+			Calendar calendar = Calendar.getInstance();
+			Timestamp timesatmpObj = new Timestamp(calendar.getTimeInMillis());
+			preparedStatement.setDate(23, date);
+			preparedStatement.setTimestamp(24, timesatmpObj);
+
+			System.out.println(preparedStatement);
+			result = preparedStatement.executeUpdate();
+			if (result > 0) {
+				System.out.println("Successfully inserted into table");
+			} else {
+				System.out.println("Error while inserting into table");
+			}
+
+		} catch (SQLException e) {
+			printSQLException(e);
+
+		} finally {
+			try {
+				connection.close();
+				preparedStatement.close();
+			} catch (SQLException e) {
+				System.out.println(e);
+				e.printStackTrace();
+			}
+
+		}
+		return result;
+	}
+
+
+	public List<CallerParticulars> getCallLogByICNumber(String icNumber)
+			throws SQLException {
+
+		String selectQuery = "SELECT * FROM app.call_logs WHERE ic_number = ?";
+		List<CallerParticulars> callLogList = new ArrayList<>();
+		try {
+
+			connection = new DbConnection().getConnection();
+			preparedStatement = connection.prepareStatement(selectQuery);
+			preparedStatement.setString(1, icNumber);
+			resultSet = preparedStatement.executeQuery();
+
+			while (resultSet.next()) {
+				CallerParticulars cp = new CallerParticulars();
+				cp.setId(resultSet.getInt("id"));
+				cp.setName(resultSet.getString("name"));
+				cp.setBlock(resultSet.getString("block"));
+				cp.setAddress(resultSet.getString("address"));
+				cp.setDoorNumber(resultSet.getString("door_number"));
+				cp.setUnitNumber(resultSet.getString("unit_number"));
+				cp.setPostalcode(resultSet.getString("postalcode"));
+				cp.setEmail(resultSet.getString("email"));
+				cp.setIcType(resultSet.getString("ic_type"));
+				cp.setIcNumber(resultSet.getString("ic_number"));
+				cp.setHomePhoneNumber(resultSet.getString("home_ph_no"));
+				cp.setOfficePhoneNumber(resultSet.getString("office_ph_no"));
+				cp.setHandPhoneNumber(resultSet.getString("hand_ph_no"));
+				cp.setPg(resultSet.getString("pg"));
+				cp.setFax(resultSet.getString("fax"));
+				cp.setNatureOfEnquiry(resultSet.getString("nature_of_enquiry"));
+				cp.setNameOfEnquiry(resultSet.getString("name_of_enquiry"));
+				cp.setTypeOfEnquiry(resultSet.getString("type_of_enquiry"));
+				cp.setEnquiryComments(resultSet.getString("enquiry_comments"));
+				cp.setOic(resultSet.getString("oic"));
+				cp.setRating(resultSet.getString("rating"));
+				System.out.println(resultSet.getString("rating"));
+				cp.setRatingType(resultSet.getString("rating_type"));
+				cp.setDetailsOfEncounter(resultSet.getString("details_of_encounter"));
+				if (cp.getRating().equals("6")){
+					cp.setRating("3");
+				}
+				if (cp.getRating().equals("5")){
+					cp.setRating("2");
+				}
+				if (cp.getRating().equals("4")){
+					cp.setRating("1");
+				}
+				
+				callLogList.add(cp);
+
+			}
+		} catch (SQLException e) {
+			printSQLException(e);
+		} finally {
+			try {
+				connection.close();
+				preparedStatement.close();
+				resultSet.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return callLogList;
+
+	}
+
+	public List<CallerParticulars> getCallLogByDate(Date convDate)
+			throws SQLException {
+
+		String selectQuery = "SELECT * FROM app.call_logs WHERE created_date = ?";
+		List<CallerParticulars> callLogList = new ArrayList<>();
+		try {
+
+			connection = new DbConnection().getConnection();
+			preparedStatement = connection.prepareStatement(selectQuery);
+			preparedStatement.setDate(1, convDate);
+			resultSet = preparedStatement.executeQuery();
+
+			while (resultSet.next()) {
+				CallerParticulars cp = new CallerParticulars();
+				cp.setId(resultSet.getInt("id"));
+				cp.setName(resultSet.getString("name"));
+				cp.setBlock(resultSet.getString("block"));
+				cp.setAddress(resultSet.getString("address"));
+				cp.setDoorNumber(resultSet.getString("door_number"));
+				cp.setUnitNumber(resultSet.getString("unit_number"));
+				cp.setPostalcode(resultSet.getString("postalcode"));
+				cp.setEmail(resultSet.getString("email"));
+				cp.setIcType(resultSet.getString("ic_type"));
+				cp.setIcNumber(resultSet.getString("ic_number"));
+				cp.setHomePhoneNumber(resultSet.getString("home_ph_no"));
+				cp.setOfficePhoneNumber(resultSet.getString("office_ph_no"));
+				cp.setHandPhoneNumber(resultSet.getString("hand_ph_no"));
+				cp.setPg(resultSet.getString("pg"));
+				cp.setFax(resultSet.getString("fax"));
+				cp.setNameOfEnquiry(resultSet.getString("name_of_enquiry"));
+				cp.setTypeOfEnquiry(resultSet.getString("type_of_enquiry"));
+				cp.setEnquiryComments(resultSet.getString("enquiry_comments"));
+				cp.setOic(resultSet.getString("oic"));
+				cp.setRating(resultSet.getString("rating"));
+				cp.setRatingType(resultSet.getString("rating_type"));
+				cp.setDetailsOfEncounter(resultSet.getString("details_of_encounter"));
+				cp.setCreatedDateTime(resultSet.getString("created_date_time"));
+				System.out.println(resultSet.getString("rating_type"));
+				if (cp.getRating().equals("6")){
+					cp.setRating("3");
+				}
+				if (cp.getRating().equals("5")){
+					cp.setRating("2");
+				}
+				if (cp.getRating().equals("4")){
+					cp.setRating("1");
+				}
+				callLogList.add(cp);
+
+			}
+		} catch (SQLException e) {
+			printSQLException(e);
+		} finally {
+			try {
+				connection.close();
+				preparedStatement.close();
+				resultSet.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+		return callLogList;
+
+	}
+
+	public CallerParticulars getCallLogById(int id) throws SQLException {
+		CallerParticulars cp = new CallerParticulars();
+		String selectQuery = "SELECT * FROM app.call_logs WHERE id = ?";
+		try {
+
+			connection = new DbConnection().getConnection();
+			preparedStatement = connection.prepareStatement(selectQuery);
+			preparedStatement.setInt(1, id);
+			resultSet = preparedStatement.executeQuery();
+
+			while (resultSet.next()) {
+
+				cp.setId(resultSet.getInt("id"));
+				cp.setName(resultSet.getString("name"));
+				cp.setBlock(resultSet.getString("block"));
+				cp.setAddress(resultSet.getString("address"));
+				cp.setDoorNumber(resultSet.getString("door_number"));
+				cp.setUnitNumber(resultSet.getString("unit_number"));
+				cp.setPostalcode(resultSet.getString("postalcode"));
+				cp.setEmail(resultSet.getString("email"));
+				cp.setIcType(resultSet.getString("ic_type"));
+				cp.setIcNumber(resultSet.getString("ic_number"));
+				cp.setHomePhoneNumber(resultSet.getString("home_ph_no"));
+				cp.setOfficePhoneNumber(resultSet.getString("office_ph_no"));
+				cp.setHandPhoneNumber(resultSet.getString("hand_ph_no"));
+				cp.setPg(resultSet.getString("pg"));
+				cp.setFax(resultSet.getString("fax"));
+				cp.setNatureOfEnquiry(resultSet.getString("nature_of_enquiry"));
+				cp.setNameOfEnquiry(resultSet.getString("name_of_enquiry"));
+				cp.setTypeOfEnquiry(resultSet.getString("type_of_enquiry"));
+				cp.setEnquiryComments(resultSet.getString("enquiry_comments"));
+				cp.setOic(resultSet.getString("oic"));
+				cp.setRating(resultSet.getString("rating"));
+				cp.setRatingType(resultSet.getString("rating_type"));
+				cp.setDetailsOfEncounter(resultSet.getString("details_of_encounter"));
+				cp.setCreatedDateTime(resultSet.getString("created_date_time"));
+				System.out.println(resultSet.getString("rating_type"));
+				if (cp.getRating().equals("6")){
+					cp.setRating("3");
+				}
+				if (cp.getRating().equals("5")){
+					cp.setRating("2");
+				}
+				if (cp.getRating().equals("4")){
+					cp.setRating("1");
+				}
+
+			}
+		} catch (SQLException e) {
+			printSQLException(e);
+		} finally {
+			try {
+				connection.close();
+				preparedStatement.close();
+				resultSet.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+		return cp;
+
+	}
+
+	private void printSQLException(SQLException ex) {
+		for (Throwable e : ex) {
+			if (e instanceof SQLException) {
+				e.printStackTrace(System.err);
+				System.err.println("SQLState: "
+						+ ((SQLException) e).getSQLState());
+				System.err.println("Error Code: "
+						+ ((SQLException) e).getErrorCode());
+				System.err.println("Message: " + e.getMessage());
+				Throwable t = ex.getCause();
+				while (t != null) {
+					System.out.println("Cause: " + t);
+					t = t.getCause();
+				}
+			}
+		}
+	}
+
+	
+}
