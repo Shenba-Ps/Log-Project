@@ -1,0 +1,36 @@
+.ColorLabel {
+	color: brown;
+	font-weight: bold;
+}
+
+.Label {
+	font-weight: bold;
+}
+
+.StaffParticular tr {
+	width: 50%;
+}
+
+.StaffParticular tr td {
+	width: 50%;
+}
+
+.CallerDetail {
+	border-collapse: collapse;
+	border-radius: 30px;
+	border-style: hidden;
+}
+
+.CallerDetail tr {
+	width: 50%;
+}
+
+.CallerDetail tr td {
+	width: 50%;
+	background-color: #87CEEB;
+}
+
+.Required {
+	color: red;
+	font-weight: bold;
+}
