@@ -1,0 +1,119 @@
+package com.call_log.controller;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.call_log.dao.CallLogDao;
+import com.call_log.model.CallerParticulars;
+
+@WebServlet(name = "SearchServlet", urlPatterns = { "/searchLogByNric","/searchLogBydate", "/searchLogById" })
+public class SearchServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private CallLogDao callLogDao;
+
+	public SearchServlet() {
+		super();
+		this.callLogDao = new CallLogDao();
+
+	}
+
+	public void init(ServletConfig config) throws ServletException {
+
+	}
+
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+
+	}
+
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+
+		String url = request.getServletPath();
+
+		if (url.equals("/searchLogByNric")) {
+			String icNumber = request.getParameter("nmidICNo");
+
+			try {
+				if (icNumber.equals("")) {
+					RequestDispatcher dispatcher = request.getRequestDispatcher("ViewEnquiry.jsp");
+					dispatcher.forward(request, response);
+					
+				} else if (icNumber != "") {
+					List<CallerParticulars> callLogNricList = callLogDao.getCallLogByICNumber(icNumber);
+					if (callLogNricList.isEmpty()) {
+						response.sendRedirect("ViewEnquiry.jsp");
+					} else {
+						request.setAttribute("callLogNricList", callLogNricList);
+						RequestDispatcher dispatcher = request.getRequestDispatcher("NricList.jsp");
+						dispatcher.forward(request, response);
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				
+			}
+
+		}
+
+		else if (url.equals("/searchLogBydate")) {
+			String strDate = request.getParameter("nmidLogDate");
+			try {
+				if (strDate.equals("")) {
+					RequestDispatcher dispatcher = request.getRequestDispatcher("ViewEnquiry.jsp");
+					dispatcher.forward(request, response);
+					;
+				} else if (strDate != "") {
+
+					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+					Date date1 = formatter.parse(strDate);
+					java.sql.Date convDate = new java.sql.Date(date1.getTime());
+					List<CallerParticulars> callLogDateList = callLogDao.getCallLogByDate(convDate);
+					if (callLogDateList.isEmpty()) {
+						response.sendRedirect("ViewEnquiry.jsp");
+					} else {
+						request.setAttribute("callLogDateList", callLogDateList);
+						RequestDispatcher dispatcher = request.getRequestDispatcher("DateList.jsp");
+						dispatcher.forward(request, response);
+					}
+				}
+			} catch (SQLException | ParseException e) {
+				e.printStackTrace();
+				
+			}
+
+		} else if (url.equals("/searchLogById")) {
+
+			int id = Integer.parseInt(request.getParameter("go"));
+
+			try {
+				if (id > 0) {
+					CallerParticulars callLogById = callLogDao.getCallLogById(id);
+					request.setAttribute("callLogById", callLogById);
+					RequestDispatcher dispatcher = request.getRequestDispatcher("DetailView.jsp");
+					dispatcher.forward(request, response);
+				} else {
+					response.sendRedirect("ViewEnquiry.jsp");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				
+			}
+
+		}
+	}
+
+}
